@@ -9,7 +9,6 @@ node {
     echo 'Building project'
     def mvnHome = tool 'M3'
     def javaHome = tool 'jdk8'
-    sh "${mvnHome}/bin/mvn clean package"
 
     stage 'Build image and deploy in Dev'
     echo 'Building docker image and deploying to Dev'
@@ -17,7 +16,7 @@ node {
 
     stage 'Automated tests'
     echo 'This stage simulates automated tests'
-    sh "${mvnHome}/bin/mvn -B -Dmaven.test.failure.ignore verify"
+    sh "${mvnHome}/bin/mvn -B -Dmaven.test.failure.ignore clean package verify"
 
     stage 'Deploy to QA'
     echo 'Deploying to QA'
@@ -34,6 +33,7 @@ node {
 // Creates a Build and triggers it
 def buildProject(String project){
     projectSet(project)
+    sh "oc delete bc --all"
     sh "oc new-build . --name=iot-eap-demo -l app=iot-eap-demo --image=jboss-eap70-openshift:1.3 --strategy=source || echo 'Build exists'"
     sh "oc logs -f bc/iot-eap-demo"
     appDeploy()
