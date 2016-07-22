@@ -1,0 +1,1 @@
+MAVEN_MIRROR_URL=http://nexus.ci.svc.cluster.local:8081/content/groups/public/
