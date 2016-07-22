@@ -28,7 +28,7 @@ node {
 
     stage 'Deploy to production'
     echo 'Deploying to production'
-    deployProject('iot-eap-demo-dev', 'iot-eap-demo-prod')
+    deployProject('iot-eap-demo-dev', 'iot-eap-demo')
 }
 
 // Creates a Build and triggers it
