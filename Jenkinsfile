@@ -34,8 +34,8 @@ node {
 // Creates a Build and triggers it
 def buildProject(String project){
     projectSet(project)
-    sh "oc new-build --binary --name=iot-eap-demo -l app=iot-eap-demo || echo 'Build exists'"
-    sh "oc start-build iot-eap-demo --from-dir=. --follow"
+    sh "oc new-build . --name=iot-eap-demo -l app=iot-eap-demo --image=jboss-eap70-openshift:1.3 --strategy=source || echo 'Build exists'"
+    sh "oc logs -f bc/iot-eap-demo"
     appDeploy()
 }
 
@@ -62,6 +62,6 @@ def appDeploy(){
     sh "oc new-app iot-eap-demo -l app=iot-eap-demo,hystrix.enabled=true || echo 'Aplication already Exists'"
     sh "oc expose service iot-eap-demo || echo 'Service already exposed'"
     sh 'oc patch dc/iot-eap-demo -p \'{"spec":{"template":{"spec":{"containers":[{"name":"iot-eap-demo","ports":[{"containerPort": 8778,"name":"jolokia"}]}]}}}}\''
-    sh 'oc patch dc/iot-eap-demo -p \'{"spec":{"template":{"spec":{"containers":[{"name":"iot-eap-demo","readinessProbe":{"httpGet":{"path":"/api/health","port":8080}}}]}}}}\''
+    sh 'oc patch dc/iot-eap-demo -p \'{"spec":{"template":{"spec":{"containers":[{"name":"iot-eap-demo","readinessProbe":{"httpGet":{"path":"/","port":8080}}}]}}}}\''
 }
 
