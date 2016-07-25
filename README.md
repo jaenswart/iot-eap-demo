@@ -58,4 +58,4 @@ To build:
 	$ cp target/ROOT.war /my/jboss/standalone/deployments
 
 If it successfully deploys, you should be able to access the dashboard at `http://localhost:8080`.
-Click around, and enjoy.
+Click around, and enjoy!
