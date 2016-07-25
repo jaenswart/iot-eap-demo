@@ -34,7 +34,7 @@ node {
 def buildProject(String project){
     projectSet(project)
     sh "oc delete bc --all"
-    sh "oc new-build . --name=iot-eap-demo -l app=iot-eap-demo --image=jboss-eap70-openshift:1.3 --strategy=source || echo 'Build exists'"
+    sh "oc new-build . --name=iot-eap-demo -l app=iot-eap-demo --image=jboss-eap70-openshift:1.4 --strategy=source || echo 'Build exists'"
     sh "oc logs -f bc/iot-eap-demo"
     appDeploy()
 }
