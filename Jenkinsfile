@@ -65,6 +65,7 @@ def appDeploy(){
     sh "oc new-app iot-frontend -l app=iot-frontend,hystrix.enabled=true || echo 'Application already Exists'"
     sh "oc new-app iot-device-service -l app=iot-device-service,hystrix.enabled=true || echo 'Application service already Exists'"
     sh "oc expose service iot-frontend || echo 'Service already exposed'"
+    sh "oc expose service iot-device-service || echo 'Data Service already exposed'"
     sh 'oc patch dc/iot-frontend -p \'{"spec":{"triggers":[]}}\''
     sh 'oc patch dc/iot-frontend -p \'{"spec":{"template":{"spec":{"containers":[{"name":"iot-frontend","ports":[{"containerPort": 8778,"name":"jolokia"}]}]}}}}\''
     sh 'oc patch dc/iot-frontend -p \'{"spec":{"template":{"spec":{"containers":[{"name":"iot-frontend","readinessProbe":{"httpGet":{"path":"/","port":8080}}}]}}}}\''
