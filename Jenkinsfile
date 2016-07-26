@@ -61,6 +61,7 @@ def projectSet(String project){
 def appDeploy(){
     sh "oc new-app iot-eap-demo -l app=iot-eap-demo,hystrix.enabled=true || echo 'Aplication already Exists'"
     sh "oc expose service iot-eap-demo || echo 'Service already exposed'"
+    sh 'oc patch dc/iot-eap-demo -p \'{"spec":{"triggers":[]}}\''
     sh 'oc patch dc/iot-eap-demo -p \'{"spec":{"template":{"spec":{"containers":[{"name":"iot-eap-demo","ports":[{"containerPort": 8778,"name":"jolokia"}]}]}}}}\''
     sh 'oc patch dc/iot-eap-demo -p \'{"spec":{"template":{"spec":{"containers":[{"name":"iot-eap-demo","readinessProbe":{"httpGet":{"path":"/","port":8080}}}]}}}}\''
 }
