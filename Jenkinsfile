@@ -34,7 +34,7 @@ node {
 def buildProject(String project){
     projectSet(project)
     sh "oc delete bc --all"
-    sh "oc new-app --name=iot-device-service https://github.com/openshift/nodejs-ex"
+    sh "oc new-app --name=iot-device-service https://github.com/openshift/nodejs-ex || echo 'App Service Exists'"
     sh "oc new-build . --name=iot-frontend -l app=iot-frontend --image=jboss-eap70-openshift:1.4 --strategy=source || echo 'Build exists'"
     sh "oc logs -f bc/iot-frontend"
     appDeploy()
