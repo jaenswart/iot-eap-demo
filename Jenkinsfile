@@ -59,7 +59,7 @@ def projectSet(String project){
 
 // Deploy the project based on a existing ImageStream
 def appDeploy(){
-    sh "oc delete dc/iot-eap-demo" || echo 'Application deployment exists'"
+    sh "oc delete dc/iot-eap-demo || echo 'Application deployment exists'"
     sh "oc new-app iot-eap-demo -l app=iot-eap-demo,hystrix.enabled=true || echo 'Application already Exists'"
     sh "oc expose service iot-eap-demo || echo 'Service already exposed'"
     sh 'oc patch dc/iot-eap-demo -p \'{"spec":{"triggers":[]}}\''
