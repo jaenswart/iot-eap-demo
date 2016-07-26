@@ -45,6 +45,7 @@ def deployProject(String origProject, String project){
     projectSet(project)
     sh "oc policy add-role-to-user system:image-puller system:serviceaccount:${project}:default -n ${origProject}"
     sh "oc tag ${origProject}/iot-frontend:latest ${project}/iot-frontend:latest"
+    sh "oc tag ${origProject}/iot-device-service:latest ${project}/iot-device-service:latest"
     appDeploy()
 }
 
@@ -62,6 +63,7 @@ def projectSet(String project){
 def appDeploy(){
     sh "oc delete dc/iot-frontend || echo 'Application deployment exists'"
     sh "oc new-app iot-frontend -l app=iot-frontend,hystrix.enabled=true || echo 'Application already Exists'"
+    sh "oc new-app iot-device-service -l app=iot-device-service,hystrix.enabled=true || echo 'Application service already Exists'"
     sh "oc expose service iot-frontend || echo 'Service already exposed'"
     sh 'oc patch dc/iot-frontend -p \'{"spec":{"triggers":[]}}\''
     sh 'oc patch dc/iot-frontend -p \'{"spec":{"template":{"spec":{"containers":[{"name":"iot-frontend","ports":[{"containerPort": 8778,"name":"jolokia"}]}]}}}}\''
