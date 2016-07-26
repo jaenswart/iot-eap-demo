@@ -5,7 +5,7 @@ node {
     echo 'Checking out git repository'
     git url: 'https://github.com/jamesfalkner/iot-eap-demo'
 
-    stage 'Build project with Maven'
+    stage 'Build microservices with maven'
     echo 'Building project'
     def mvnHome = tool 'M3'
     def javaHome = tool 'jdk8'
@@ -34,8 +34,9 @@ node {
 def buildProject(String project){
     projectSet(project)
     sh "oc delete bc --all"
-    sh "oc new-build . --name=iot-eap-demo -l app=iot-eap-demo --image=jboss-eap70-openshift:1.4 --strategy=source || echo 'Build exists'"
-    sh "oc logs -f bc/iot-eap-demo"
+    sh "oc new-app --name=iot-device-service https://github.com/openshift/nodejs-ex"
+    sh "oc new-build . --name=iot-frontend -l app=iot-frontend --image=jboss-eap70-openshift:1.4 --strategy=source || echo 'Build exists'"
+    sh "oc logs -f bc/iot-frontend"
     appDeploy()
 }
 
@@ -43,7 +44,7 @@ def buildProject(String project){
 def deployProject(String origProject, String project){
     projectSet(project)
     sh "oc policy add-role-to-user system:image-puller system:serviceaccount:${project}:default -n ${origProject}"
-    sh "oc tag ${origProject}/iot-eap-demo:latest ${project}/iot-eap-demo:latest"
+    sh "oc tag ${origProject}/iot-frontend:latest ${project}/iot-frontend:latest"
     appDeploy()
 }
 
@@ -59,11 +60,11 @@ def projectSet(String project){
 
 // Deploy the project based on a existing ImageStream
 def appDeploy(){
-    sh "oc delete dc/iot-eap-demo || echo 'Application deployment exists'"
-    sh "oc new-app iot-eap-demo -l app=iot-eap-demo,hystrix.enabled=true || echo 'Application already Exists'"
-    sh "oc expose service iot-eap-demo || echo 'Service already exposed'"
-    sh 'oc patch dc/iot-eap-demo -p \'{"spec":{"triggers":[]}}\''
-    sh 'oc patch dc/iot-eap-demo -p \'{"spec":{"template":{"spec":{"containers":[{"name":"iot-eap-demo","ports":[{"containerPort": 8778,"name":"jolokia"}]}]}}}}\''
-    sh 'oc patch dc/iot-eap-demo -p \'{"spec":{"template":{"spec":{"containers":[{"name":"iot-eap-demo","readinessProbe":{"httpGet":{"path":"/","port":8080}}}]}}}}\''
+    sh "oc delete dc/iot-frontend || echo 'Application deployment exists'"
+    sh "oc new-app iot-frontend -l app=iot-frontend,hystrix.enabled=true || echo 'Application already Exists'"
+    sh "oc expose service iot-frontend || echo 'Service already exposed'"
+    sh 'oc patch dc/iot-frontend -p \'{"spec":{"triggers":[]}}\''
+    sh 'oc patch dc/iot-frontend -p \'{"spec":{"template":{"spec":{"containers":[{"name":"iot-frontend","ports":[{"containerPort": 8778,"name":"jolokia"}]}]}}}}\''
+    sh 'oc patch dc/iot-frontend -p \'{"spec":{"template":{"spec":{"containers":[{"name":"iot-frontend","readinessProbe":{"httpGet":{"path":"/","port":8080}}}]}}}}\''
 }
 
