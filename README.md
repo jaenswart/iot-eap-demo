@@ -1,6 +1,6 @@
 Red Hat IoT Precious Cargo Demo
 ================================
-This is an example IoT demo showing a realtime updating dashboard of data streaming from a
+This is an example of an IoT demo showing a realtime updating dashboard of data streaming from a
 [Red Hat + Eurotech](https://www.redhat.com/en/about/press-releases/eurotech-and-red-hat-collaborate-power-more-secure-and-scalable-internet-things-implementations)
 IoT gateway device through the [Eurotech Everyware Cloud](http://www.eurotech.com/en/products/software+services/everyware+device+cloud).
 It demonstrates realtime package tracking, alerting, and a telemetry dashboard showing critical measurements of packages in transit,
